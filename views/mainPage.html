@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"><link rel="icon" href="https://jscdn.com.cn/highcharts/images/favicon.ico">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <style>
+            div.first {
+                  background-color: #f2f2f2;
+                  color: black;
+                  font-size: large;
+                  font-weight: bold;
+              }
+
+            table {
+                border-collapse: collapse;
+                font-size: small;
+                font-style: oblique;
+                }
+
+            th, td {
+                padding: 8px;
+                text-align: left;
+                border-bottom: 1px solid #ddd;
+                }
+
+            tr:hover{background-color:#f5f5f5}
+            /*tr:nth-child(even){background-color: lightgray}*/
+
+            th {
+                background-color: gray;
+                color: white;
+                }
+        </style>
+
+        <script src="https://code.highcharts.com.cn/jquery/jquery-1.8.3.min.js"></script>
+        <script src="https://code.highcharts.com.cn/highcharts/highcharts.js"></script>
+        <script src="https://code.highcharts.com.cn/highcharts/modules/exporting.js"></script>
+        <script src="https://img.hcharts.cn/highcharts-plugins/highcharts-zh_CN.js"></script>
+        <script src="https://code.highcharts.com.cn/highcharts/themes/dark-unica.js"></script>
+
+    <title>Money Supply PBOC Data</title>
+</head>
+<body style="font-style: oblique">
+    <div class="first">
+        <!--
+        <img src="{{pic}}">
+        -->
+        <br>
+        <a href="" style="color: black; animation: alternate; text-decoration: none">MONEY SUPPLY PBOC DATA</a>
+        <hr>
+    </div>
+
+    <div id="container" style="width: auto;height: auto;"></div>
+    <script>
+        var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'spline'
+            },
+            title: {
+                text: 'Money Supply'
+            },
+            subtitle: {
+                text: 'M2g M1g M1g-M2g'
+            },
+            xAxis: {
+                type: 'category',
+                categories: {{ date }},
+                labels: {overflow: 'justify'}
+            },
+
+            yAxis: {
+                title: {
+                    text: 'Growth rate'
+                },
+                min: -0.30,
+                minorGridLineWidth: 0,
+                gridLineWidth: 0,
+                alternateGridColor: null,
+                plotBands: [{ // Light air
+                    from: -0.20,
+                    to: -0.10,
+                    color: 'rgba(68, 170, 213, 0.1)',
+                    label: {
+                        text: 'level1',
+                        style: {
+                            color: '#606060'
+                        }
+                    }
+                }, { // Light breeze
+                    from: -0.10,
+                    to: 0,
+                    color: 'rgba(0, 0, 0, 0)',
+                    label: {
+                        text: 'level2',
+                        style: {
+                            color: '#606060'
+                        }
+                    }
+                }, { // Gentle breeze
+                    from: 0,
+                    to: 0.10,
+                    color: 'rgba(68, 170, 213, 0.1)',
+                    label: {
+                        text: 'level3',
+                        style: {
+                            color: '#606060'
+                        }
+                    }
+                }, { // Moderate breeze
+                    from: 0.10,
+                    to: 0.20,
+                    color: 'rgba(0, 0, 0, 0)',
+                    label: {
+                        text: 'level4',
+                        style: {
+                            color: '#606060'
+                        }
+                    }
+                }, { // Fresh breeze
+                    from: 0.20,
+                    to: 0.30,
+                    color: 'rgba(68, 170, 213, 0.1)',
+                    label: {
+                        text: 'level5',
+                        style: {
+                            color: '#606060'
+                        }
+                    }
+                }, { // Strong breeze
+                    from: 0.30,
+                    to: 0.40,
+                    color: 'rgba(0, 0, 0, 0)',
+                    label: {
+                        text: 'level6',
+                        style: {
+                            color: '#606060'
+                        }
+                    }
+                }, { // High wind
+                    from: 0.40,
+                    to: 0.50,
+                    color: 'rgba(68, 170, 213, 0.1)',
+                    label: {
+                        text: 'level7',
+                        style: {
+                            color: '#606060'
+                        }
+                    }
+                }]
+            },
+            tooltip: {
+                valueSuffix: ' rate'
+            },
+            plotOptions: {
+                spline: {
+                    lineWidth: 2,
+                    states: {
+                        hover: {
+                            lineWidth: 1.7
+                        }
+                    },
+                    marker: {
+                        enabled: false
+                    },
+                    // pointInterval: 3600000, // one hour
+                    // pointStart: Date.UTC(2009, 9, 6, 0, 0, 0)
+                }
+            },
+            series: [{
+                name: 'M2g',
+                data: {{m2g_date}}
+            }, {
+                name: 'M1g',
+                data: {{m1g_date}}
+            },{
+                name: 'M1g-M2g',
+                data: {{m1g_m2g_date}}
+            }],
+            navigation: {
+                menuItemStyle: {
+                    fontSize: '10px'
+                }},
+            credits: {
+                text:"Chenzeming@GoldmanSachs"
+            }}
+        );
+    </script>
+
+    <hr>
+
+    <table border="1px">
+        <tr>
+            <th>Date</th>
+            <th>M2</th>
+            <th>M1</th>
+            <th>M2g</th>
+            <th>M1g</th>
+            <th>M1g-M2g</th>
+        </tr>
+        {% for index in df.index %}
+        <tr>
+            <td>{{index}}</td>
+            <td>{{df.loc[index].values[0]}}</td>
+            <td>{{df.loc[index].values[1]}}</td>
+            <td>{{df.loc[index].values[2]}}</td>
+            <td>{{df.loc[index].values[3]}}</td>
+            <td>{{df.loc[index].values[4]}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>
+
